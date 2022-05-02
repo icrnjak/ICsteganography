@@ -1,6 +1,5 @@
 package cz.mendelu.icsteganography.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import cz.mendelu.icsteganography.dto.HideRequest
 import cz.mendelu.icsteganography.service.SteganographyService
 import cz.mendelu.icsteganography.validator.HideRequestValidator
@@ -9,13 +8,15 @@ import org.springframework.ui.Model
 import org.springframework.validation.BindingResult
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.WebDataBinder
-import org.springframework.web.bind.annotation.*
-import java.util.Base64
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.InitBinder
+import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.bind.annotation.PostMapping
+import java.util.*
 
 @Controller
-class MainController(
+class HideController(
     private val steganographyService: SteganographyService,
-    private val objectMapper: ObjectMapper,
     private val hideRequestValidator: HideRequestValidator
 ) {
     @InitBinder("hideRequest")
@@ -26,7 +27,7 @@ class MainController(
     @GetMapping
     fun showMainPage(model: Model): String {
         model.addAttribute("hideRequest", HideRequest())
-        return "main"
+        return "hide"
     }
 
     @PostMapping("/hide")
@@ -36,7 +37,7 @@ class MainController(
         model: Model
     ): String {
         if (bindingResult.hasErrors()) {
-            return "main"
+            return "hide"
         }
 
         val hideResponse = steganographyService.hide(hideRequest)
@@ -48,6 +49,6 @@ class MainController(
         hideResponse.result?.let {
             model.addAttribute("resultBase64", Base64.getEncoder().encodeToString(it.bytes))
         }
-        return "main"
+        return "hide"
     }
 }
