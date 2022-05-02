@@ -58,6 +58,35 @@ class SteganographyServiceImpl : SteganographyService {
     }
 
     override fun find(findRequest: FindRequest): FindResponse {
-        return FindResponse("onions 0")
+        val gifImage = GifImage(findRequest.gif!!.bytes)
+
+        val textByteList = ArrayList<Byte>()
+        // bits of each byte are reversed, so we use stack
+        val stack = ArrayDeque<Byte>()
+        gifImage.globalColorTableBytes.forEach {
+            val bit = it and 1
+            stack.addLast(bit)
+
+            if (stack.size == 8) {
+                var byte = 0
+                for (i in 0 until 8) {
+                    byte = byte shl 1
+                    byte = byte or stack.removeLast().toInt()
+                }
+                if (byte == 0) {
+                    return@forEach
+                }
+
+                stack.clear()
+                textByteList.add(byte.toByte())
+            }
+        }
+
+        val hiddenText = String(textByteList.toByteArray())
+        println("Found byte count ${textByteList.toByteArray().size}")
+        println("Found bytes ${textByteList.toByteArray().joinToString(separator = ""){"%02x".format(it)}}")
+        println("Found text $hiddenText")
+
+        return FindResponse(hiddenText)
     }
 }
