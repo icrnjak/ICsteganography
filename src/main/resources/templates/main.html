@@ -34,28 +34,38 @@
 
     <section class="card p-2 mb-3" th:if="${resultBase64 ne null}">
         <h2>Result</h2>
-        <div class="d-flex">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Images are here, so they are loaded at the (sort of) same time -->
+                <div class="col">
+                    <h3>Original</h3>
+                    <img alt="Resulting image" th:src="@{'data:image/gif;base64,' + ${originalBase64}}" src=""/>
+                </div>
 
-            <div class="me-1">
-                <h3>Original</h3>
-                <img alt="Resulting image" th:src="@{'data:image/gif;base64,' + ${originalBase64}}" src=""/>
-                <a class="btn btn-primary d-block mt-2" download="original.gif"
-                   th:href="@{'data:image/gif;base64,' + ${originalBase64}}">Download</a>
-
-                <h4>Original colors</h4>
-                <p th:each="color : ${hideResponse.original.getGlobalColorTable()}"
-                      th:text="${color}"></p>
+                <div class="col">
+                    <h3>Resulting image</h3>
+                    <img alt="Resulting image" th:src="@{'data:image/gif;base64,' + ${resultBase64}}" src=""/>
+                </div>
             </div>
 
-            <div>
-                <h3>Resulting image</h3>
-                <img alt="Resulting image" th:src="@{'data:image/gif;base64,' + ${resultBase64}}" src=""/>
-                <a class="btn btn-primary d-block mt-2" download="result.gif"
-                   th:href="@{'data:image/gif;base64,' + ${resultBase64}}">Download</a>
+            <div class="row">
+                <div class="col">
+                    <a class="btn btn-primary d-block mt-2" download="original.gif"
+                       th:href="@{'data:image/gif;base64,' + ${originalBase64}}">Download</a>
 
-                <h4>Result colors</h4>
-                <p th:each="color : ${hideResponse.result.getGlobalColorTable()}"
-                   th:text="${color}"></p>
+                    <h4>Original colors</h4>
+                    <p th:each="color : ${hideResponse.original.getGlobalColorTable()}"
+                       th:text="${color}"></p>
+                </div>
+
+                <div class="col">
+                    <a class="btn btn-primary d-block mt-2" download="result.gif"
+                       th:href="@{'data:image/gif;base64,' + ${resultBase64}}">Download</a>
+
+                    <h4>Result colors</h4>
+                    <p th:each="color : ${hideResponse.result.getGlobalColorTable()}"
+                       th:text="${color}"></p>
+                </div>
             </div>
 
         </div>
