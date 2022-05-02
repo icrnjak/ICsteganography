@@ -1,5 +1,7 @@
 package cz.mendelu.icsteganography.service
 
+import cz.mendelu.icsteganography.dto.FindRequest
+import cz.mendelu.icsteganography.dto.FindResponse
 import cz.mendelu.icsteganography.dto.HideRequest
 import cz.mendelu.icsteganography.dto.HideResponse
 import cz.mendelu.icsteganography.stego.GifImage
@@ -56,5 +58,9 @@ class SteganographyServiceImpl : SteganographyService {
             return HideResponse(originalGif, resultGif)
         }
         return HideResponse()
+    }
+
+    override fun find(findRequest: FindRequest): FindResponse {
+        return FindResponse("onions 0")
     }
 }
