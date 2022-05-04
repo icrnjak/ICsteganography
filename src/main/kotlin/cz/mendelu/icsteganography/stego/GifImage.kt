@@ -13,7 +13,8 @@ class GifImage(
         get() = field.copyOf()
         private set
     val size: Int = bytes.size
-    val version: String = String(bytes.copyOfRange(0, 6))
+    val gifSignature: String = String(bytes.copyOfRange(0, 3))
+    val version: String = String(bytes.copyOfRange(3, 6))
     val width: Int = ByteBuffer.wrap(bytes.copyOfRange(6, 8).reversedArray()).short.toInt()
     val height: Int = ByteBuffer.wrap(bytes.copyOfRange(8, 10).reversedArray()).short.toInt()
     val usesGlobalColorTable: Boolean = (bytes[10] and 0x80.toByte()) == 0x80.toByte()
@@ -24,11 +25,16 @@ class GifImage(
     init {
         this.bytes = bytes
         if (usesGlobalColorTable) {
-            globalColorTableSize = 2.0.pow((bytes[10] and 0x07.toByte()) + 1).toInt()
-            globalColorTableBytes = bytes.copyOfRange(13, 13 + globalColorTableSize * 3)
+            // power is the value of last 3 bits plus 1
+            val colorTableSizePower = (bytes[10] and 0x07.toByte()) + 1
+            globalColorTableSize = 2.0.pow(colorTableSizePower).toInt()
+            globalColorTableBytes = bytes.copyOfRange(GifUtil.GCT_START, GifUtil.calcGctEnd(globalColorTableSize))
             val globalColorTableTemp: ArrayList<ColorRGB> = ArrayList()
             for (i in globalColorTableBytes.indices step 3) {
-                val color = ColorRGB(globalColorTableBytes[i].toUByte(), globalColorTableBytes[i + 1].toUByte(), globalColorTableBytes[i + 2].toUByte())
+                val r = globalColorTableBytes[i].toUByte()
+                val g = globalColorTableBytes[i + 1].toUByte()
+                val b = globalColorTableBytes[i + 2].toUByte()
+                val color = ColorRGB(r,g,b)
                 globalColorTableTemp.add(color)
             }
             globalColorTable = Collections.unmodifiableList(globalColorTableTemp)
@@ -36,7 +42,6 @@ class GifImage(
             globalColorTableSize = 0
             globalColorTableBytes = ByteArray(0)
             globalColorTable = listOf()
-
         }
     }
 

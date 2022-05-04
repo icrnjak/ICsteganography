@@ -70,14 +70,15 @@ class SteganographyServiceImpl : SteganographyService {
             if (stack.size == 8) {
                 var byte = 0
                 for (i in 0 until 8) {
+                    // turn those 8 bits from a stack into a byte
                     byte = byte shl 1
                     byte = byte or stack.removeLast().toInt()
                 }
                 if (byte == 0) {
+                    // end of message, no need to read further
                     return@forEach
                 }
 
-                stack.clear()
                 textByteList.add(byte.toByte())
             }
         }
