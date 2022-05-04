@@ -37,9 +37,9 @@ class GifImage(
             globalColorTableBytes = bytes.copyOfRange(GifUtil.GCT_START, GifUtil.calcGctEnd(globalColorTableSize))
             val globalColorTableTemp: ArrayList<ColorRGB> = ArrayList()
             for (i in globalColorTableBytes.indices step 3) {
-                val r = globalColorTableBytes[i].toUByte()
-                val g = globalColorTableBytes[i + 1].toUByte()
-                val b = globalColorTableBytes[i + 2].toUByte()
+                val r = globalColorTableBytes[i]
+                val g = globalColorTableBytes[i + 1]
+                val b = globalColorTableBytes[i + 2]
                 val color = ColorRGB(r,g,b)
                 globalColorTableTemp.add(color)
             }

@@ -71,7 +71,13 @@
                         <div th:each="color, stat : ${hideResponse.result.getGlobalColorTable()}">
                             <div style="width: 16px; height: 16px; display: inline-block; border: 1px solid black;"
                                  th:styleappend="${'background: ' + color.toColorString()}"></div>
-                            <span th:text="${color.toHexString() + ' - ' + stat.count}"></span>
+                            <span th:text="${color.redHex}"
+                                  th:classappend="${hideResponse.original.getGlobalColorTable()[stat.index].red != color.red ? 'text-danger' : ''}"></span>
+                            <span th:text="${color.greenHex}"
+                                  th:classappend="${hideResponse.original.getGlobalColorTable()[stat.index].green != color.green ? 'text-danger' : ''}"></span>
+                            <span th:text="${color.blueHex}"
+                                  th:classappend="${hideResponse.original.getGlobalColorTable()[stat.index].blue != color.blue ? 'text-danger' : ''}"></span>
+                            <span th:text="${' - ' + stat.count}"></span>
                         </div>
                     </div>
                 </div>
