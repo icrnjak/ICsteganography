@@ -21,8 +21,9 @@
 2. In the `Gif` field, select your GIF from the step 0
 ![](help/find-image1.png)
 3. Submit the form by pressing the `Find` button
-![](help/find-image2.png)
 4. You will see the secret message!
+
+![](help/find-image2.png)
 
 ## About
 Hides (or finds) data inside a color table of a GIF. 
