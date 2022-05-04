@@ -9,6 +9,12 @@ class GifImage(
     // Image bytes
     bytes: ByteArray
 ) {
+    companion object {
+        fun isGif(bytes: ByteArray): Boolean {
+            return GifUtil.GIF_SIGNATURE == String(bytes.copyOfRange(0, 3))
+        }
+    }
+
     var bytes: ByteArray
         get() = field.copyOf()
         private set

@@ -27,6 +27,11 @@ class HideRequestValidator : Validator {
             return
         }
 
+        if (!GifImage.isGif(hideRequest.gif!!.bytes)) {
+            errors.rejectValue(HideRequest::gif.name, "", "This file must be in a GIF format")
+            return
+        }
+
         val gifImage = GifImage(hideRequest.gif!!.bytes)
         if (!gifImage.usesGlobalColorTable) {
             errors.rejectValue(HideRequest::gif.name, "", "This GIF does not use global color table, so it can not be used")

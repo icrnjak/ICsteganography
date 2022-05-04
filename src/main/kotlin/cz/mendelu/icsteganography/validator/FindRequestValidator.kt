@@ -19,8 +19,10 @@ class FindRequestValidator : Validator {
 
         if (findRequest.gif == null || findRequest.gif?.bytes == null || findRequest.gif?.bytes?.isEmpty() == true) {
             errors.rejectValue(FindRequest::gif.name, "", "GIF must be provided")
+            return
         }
-        if (errors.hasErrors()) {
+        if (!GifImage.isGif(findRequest.gif!!.bytes)) {
+            errors.rejectValue(FindRequest::gif.name, "", "This file must be in a GIF format")
             return
         }
 
