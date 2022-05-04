@@ -40,7 +40,7 @@ class HideRequestValidator : Validator {
 
 
         val textBytesSize = hideRequest.text!!.toByteArray().size
-        val maxHideBytes = gifImage.globalColorTableSize * 3 / 8 / 8
+        val maxHideBytes = gifImage.globalColorTableSize * 3 / 8
         if (textBytesSize > maxHideBytes) {
             errors.rejectValue(HideRequest::text.name, "", "This GIF can not store given text. Max is ${maxHideBytes}B, but text has ${textBytesSize}B")
             return
