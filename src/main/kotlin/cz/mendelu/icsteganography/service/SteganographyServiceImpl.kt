@@ -19,7 +19,6 @@ class SteganographyServiceImpl : SteganographyService {
         val text = hideRequest.text!!
 
         val textBytes = text.toByteArray()
-        val lsbCount = 1
         val clearMask = 0xFE.toByte()
 
         println(textBytes.joinToString(separator = "") { "%02x".format(it) })
@@ -28,6 +27,7 @@ class SteganographyServiceImpl : SteganographyService {
 
         var mask = 1
         var textIndex = 0
+        var emptyBitCount = 0;
         val resultBytes = originalGif.bytes.copyOf().mapIndexed { i, byte ->
             if (i in GifUtil.GCT_START until GifUtil.calcGctEnd(originalGif.globalColorTableSize)) {
                 // it is a color table byte, do the modification
@@ -46,8 +46,14 @@ class SteganographyServiceImpl : SteganographyService {
                     }
                     return@mapIndexed result
                 } else {
-                    // if we wrote the whole message, just clear incoming bits
-                    byte and clearMask
+                    // if we wrote the whole message, clear 8 incoming bits, so we know where message ends
+                    if (emptyBitCount < 8) {
+                        println("Writing empty bit")
+                        ++emptyBitCount
+                        byte and clearMask
+                    } else {
+                        byte
+                    }
                 }
             } else {
                 // it is not a color table byte, so do not modify it
@@ -65,29 +71,33 @@ class SteganographyServiceImpl : SteganographyService {
         val textByteList = ArrayList<Byte>()
         // bits of each byte are reversed, so we use stack
         val stack = ArrayDeque<Byte>()
-        gifImage.globalColorTableBytes.forEach {
-            val bit = it and 1
-            stack.addLast(bit)
+        kotlin.run {
+            gifImage.globalColorTableBytes.forEach {
+                val bit = it and 1
+                stack.addLast(bit)
 
-            if (stack.size == 8) {
-                var byte = 0
-                for (i in 0 until 8) {
-                    // turn those 8 bits from a stack into a byte
-                    byte = byte shl 1
-                    byte = byte or stack.removeLast().toInt()
-                }
-                if (byte == 0) {
-                    // end of message, no need to read further
-                    return@forEach
-                }
+                if (stack.size == 8) {
+                    var byte = 0
+                    for (i in 0 until 8) {
+                        // turn those 8 bits from a stack into a byte
+                        byte = byte shl 1
+                        byte = byte or stack.removeLast().toInt()
+                    }
+                    println("Read byte: %02x".format(byte))
+                    if (byte == 0) {
+                        println("End of message, found byte 0")
+                        // end of message, no need to read further
+                        return@run
+                    }
 
-                textByteList.add(byte.toByte())
+                    textByteList.add(byte.toByte())
+                }
             }
         }
 
         val hiddenText = String(textByteList.toByteArray())
         println("Found byte count ${textByteList.toByteArray().size}")
-        println("Found bytes ${textByteList.toByteArray().joinToString(separator = ""){"%02x".format(it)}}")
+        println("Found bytes in hex ${textByteList.toByteArray().joinToString(separator = "") { "%02x".format(it) }}")
         println("Found text $hiddenText")
 
         return FindResponse(hiddenText)
