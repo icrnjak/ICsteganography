@@ -32,10 +32,12 @@ class SteganographyServiceImpl : SteganographyService {
             if (i in GifUtil.GCT_START until GifUtil.calcGctEnd(originalGif.globalColorTableSize)) {
                 // it is a color table byte, do the modification
                 if (textIndex <= textBytes.lastIndex) {
-                    val bitPosition = log2(mask.toDouble()).toInt()
-                    val bit = ((textBytes[textIndex] and mask.toByte()).toInt() shr bitPosition).toByte()
-                    println("Inside %02x with mask $mask, value is $bit".format(textBytes[textIndex]))
-                    val result = (byte and clearMask) or bit
+                    val maskZeroes = log2(mask.toDouble()).toInt()
+                    val textByte = textBytes[textIndex]
+                    val maskedTextBit = textByte.toInt() and mask
+                    val textBit = (maskedTextBit shr maskZeroes).toByte()
+                    println("Inside %02x with mask $mask, value is $textBit".format(textByte))
+                    val result = (byte and clearMask) or textBit
                     mask = if (mask == 128) {
                         textIndex++
                         1
