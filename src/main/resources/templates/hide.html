@@ -47,12 +47,22 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row mb-4">
                 <div class="col">
                     <a class="btn btn-primary d-block mt-2" download="original.gif"
                        th:href="@{'data:image/gif;base64,' + ${originalBase64}}">Download</a>
+                </div>
 
-                    <h4 class="text-end">Original colors</h4>
+                <div class="col">
+                    <a class="btn btn-primary d-block mt-2" download="result.gif"
+                       th:href="@{'data:image/gif;base64,' + ${resultBase64}}">Download</a>
+                </div>
+            </div>
+
+            <div class="row">
+                <h3 class="text-center">GIF color tables (RGB Hexadecimal)</h3>
+                <div class="col">
+                    <h4 class="text-end">Original color table</h4>
                     <div class="d-flex flex-column align-items-end font-monospace">
                         <div th:each="color, stat : ${hideResponse.original.getGlobalColorTable()}">
                             <span th:text="${stat.count + ' - ' + color.toHexString()}"></span>
@@ -63,10 +73,7 @@
                 </div>
 
                 <div class="col">
-                    <a class="btn btn-primary d-block mt-2" download="result.gif"
-                       th:href="@{'data:image/gif;base64,' + ${resultBase64}}">Download</a>
-
-                    <h4>Result colors</h4>
+                    <h4>Result color table</h4>
                     <div class="d-flex flex-column font-monospace">
                         <div th:each="color, stat : ${hideResponse.result.getGlobalColorTable()}">
                             <div style="width: 16px; height: 16px; display: inline-block; border: 1px solid black;"
